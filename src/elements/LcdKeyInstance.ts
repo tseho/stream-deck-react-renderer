@@ -23,7 +23,7 @@ export default class LcdKeyInstance {
   }
 
   onPress(index: number) {
-    if (index !== this.index) {
+    if (index !== this.index || this.props.onPress === undefined) {
       return;
     }
 
@@ -61,7 +61,7 @@ export default class LcdKeyInstance {
 
   unmount() {
     if (this.onPressListener) {
-      this.container.off("down", this.onPressListener);
+      this.container?.off("down", this.onPressListener);
     }
   }
 }

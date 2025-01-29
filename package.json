@@ -10,13 +10,14 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "rollup -c --bundleConfigAsCjs",
+    "types": "tsc --strict --noEmit",
     "prettier": "prettier -c src"
   },
   "peerDependencies": {
-    "react": "^18.3.1"
+    "react": "^18.3.1",
+    "@elgato-stream-deck/node": "^6.2.0"
   },
   "dependencies": {
-    "@elgato-stream-deck/node": "^6.2.0",
     "react-reconciler": "^0.29.2",
     "sharp": "^0.33.4"
   },

@@ -185,6 +185,9 @@ export const renderer: HostConfig<
   },
   getPublicInstance(instance) {
     DEBUG && console.log("getPublicInstance");
+    if (instance === undefined) {
+      throw Error("Text nodes are not supported.");
+    }
     return instance;
   },
   /**
@@ -283,7 +286,9 @@ export const renderer: HostConfig<
   },
   appendChildToContainerChildSet(childSet, child) {
     DEBUG && console.log("appendChildToContainerChildSet");
-    childSet[child.index] = child;
+    if (child) {
+      childSet[child.index] = child;
+    }
   },
   finalizeContainerChildren(container, newChildren) {
     DEBUG && console.log("finalizeContainerChildren => void");
