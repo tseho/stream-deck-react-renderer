@@ -1,0 +1,35 @@
+{
+  "name": "stream-deck-react-renderer",
+  "version": "0.0.1",
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tseho/stream-deck-react-renderer"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rollup -c --bundleConfigAsCjs",
+    "prettier": "prettier -c src"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  },
+  "dependencies": {
+    "@elgato-stream-deck/node": "^6.2.0",
+    "react-reconciler": "^0.29.2",
+    "sharp": "^0.33.4"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.4",
+    "@rollup/plugin-node-resolve": "^15.1.0",
+    "@rollup/plugin-typescript": "^11.1.2",
+    "@types/node": "^20.12.13",
+    "@types/react-reconciler": "^0.28.8",
+    "@types/sharp": "^0.31.1",
+    "prettier": "^3.4.2",
+    "rollup": "^3.28.0",
+    "rollup-plugin-dts": "^6.1.1",
+    "typescript": "^5.4.5"
+  }
+}
