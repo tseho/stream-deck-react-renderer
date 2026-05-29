@@ -19,7 +19,9 @@ export default {
       null,
       "streamdeck",
       (err) => console.error(err),
-      null,
+      (err) => console.error(err),
+      (err) => console.error(err),
+      () => {},
     );
     reconciler.updateContainer(element, container, null, null);
   },

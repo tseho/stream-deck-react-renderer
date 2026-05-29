@@ -1,17 +1,21 @@
-import type { StreamDeck } from "@elgato-stream-deck/node";
+import type { DeviceModelId, StreamDeck } from "@elgato-stream-deck/node";
 
 export type StreamDeckContainer = StreamDeck;
 
 export interface StreamDeckElements {
-  lcdKey: {
+  "stream-deck": {
+    model: DeviceModelId;
+    children?: React.ReactNode;
+  };
+  "stream-deck-button": {
     position?: number;
     image?: string;
-    color?: string;
     onPress?: () => void;
+    onLongPress?: () => void;
   };
 }
 
-declare global {
+declare module "react" {
   namespace JSX {
     interface IntrinsicElements extends StreamDeckElements {}
   }
