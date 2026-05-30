@@ -75,7 +75,7 @@ export const renderer: HostConfig<
 > = {
   supportsMutation: false,
   supportsPersistence: true,
-  createInstance(type, props, rootContainer, hostContext, internalHandle) {
+  createInstance(type, props, rootContainer, hostContext, _internalHandle) {
     DEBUG && console.log("createInstance", type, props);
     switch (type) {
       case "stream-deck":
@@ -84,10 +84,7 @@ export const renderer: HostConfig<
         );
       case "stream-deck-button": {
         const p = props as StreamDeckElements["stream-deck-button"];
-        return new StreamDeckButtonInstance(
-          p,
-          p.position ?? internalHandle.index,
-        );
+        return new StreamDeckButtonInstance(p, p.position);
       }
       default:
         throw Error(`Unsupported type: ${type}`);
@@ -102,6 +99,9 @@ export const renderer: HostConfig<
       parentInstance instanceof StreamDeckInstance &&
       child instanceof StreamDeckButtonInstance
     ) {
+      if (child.props.position === undefined) {
+        child.index = parentInstance.buttons.size;
+      }
       parentInstance.addButton(child);
     }
   },

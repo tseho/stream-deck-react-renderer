@@ -13,9 +13,9 @@ export default class StreamDeckButtonInstance {
   props: Props;
   index: number;
 
-  constructor(props: Props, index: number) {
+  constructor(props: Props, index: number | undefined) {
     this.props = props;
-    this.index = index;
+    this.index = index ?? 0;
   }
 
   update(newProps: Partial<Props>) {
