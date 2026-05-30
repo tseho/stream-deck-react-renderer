@@ -200,10 +200,23 @@ export const renderer: HostConfig<
   ) {
     DEBUG && console.log("cloneInstance");
     const updatePayload = computeUpdatePayload(oldProps, newProps);
-    instance.update(updatePayload);
-    if (!keepChildren && instance instanceof StreamDeckInstance) {
-      instance.clearButtons();
+
+    if (instance instanceof StreamDeckInstance) {
+      // Must return a NEW object: React's persistence reconciler compares
+      // WIP.stateNode !== current.stateNode to know it must rebuild children.
+      // Returning the same instance causes React to skip appendInitialChild
+      // when keepChildren=false, leaving buttons empty after clearButtons().
+      const clone = new StreamDeckInstance({ ...instance.props, ...updatePayload });
+      if (keepChildren) {
+        instance.buttons.forEach((button, index) => {
+          clone.buttons.set(index, button);
+        });
+      }
+      return clone;
     }
+
+    // Buttons: reuse the same instance so event listeners aren't leaked.
+    instance.update(updatePayload);
     return instance;
   },
   createContainerChildSet(container) {
