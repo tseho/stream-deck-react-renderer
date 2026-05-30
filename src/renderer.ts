@@ -156,8 +156,8 @@ export const renderer: HostConfig<
     clearTimeout(id);
   },
   noTimeout: -1,
-  supportsMicrotasks: false,
-  scheduleMicrotask(fn) {},
+  supportsMicrotasks: true,
+  scheduleMicrotask: queueMicrotask,
   isPrimaryRenderer: true,
   warnsIfNotActing: true,
   setCurrentUpdatePriority(newPriority) {},
