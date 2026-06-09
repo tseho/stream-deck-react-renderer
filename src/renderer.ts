@@ -76,7 +76,7 @@ export const renderer: HostConfig<
   supportsMutation: false,
   supportsPersistence: true,
   createInstance(type, props, rootContainer, hostContext, _internalHandle) {
-    DEBUG && console.log("createInstance", type, props);
+    DEBUG && console.log("[renderer] createInstance", type, props);
     switch (type) {
       case "stream-deck":
         return new StreamDeckInstance(
@@ -94,7 +94,7 @@ export const renderer: HostConfig<
     throw Error("Text nodes are not supported.");
   },
   appendInitialChild(parentInstance, child) {
-    DEBUG && console.log("appendInitialChild", child);
+    DEBUG && console.log("[renderer] appendInitialChild", child);
     if (
       parentInstance instanceof StreamDeckInstance &&
       child instanceof StreamDeckButtonInstance
@@ -106,11 +106,11 @@ export const renderer: HostConfig<
     }
   },
   finalizeInitialChildren(instance, type, props, rootContainer, hostContext) {
-    DEBUG && console.log("finalizeInitialChildren");
+    DEBUG && console.log("[renderer] finalizeInitialChildren");
     return false;
   },
   commitUpdate(instance, type, prevProps, nextProps, internalHandle): void {
-    DEBUG && console.log("commitUpdate", instance, type);
+    DEBUG && console.log("[renderer] commitUpdate", instance, type);
     const updatePayload = computeUpdatePayload(prevProps, nextProps);
     instance.update(updatePayload);
   },
@@ -118,11 +118,11 @@ export const renderer: HostConfig<
     return false;
   },
   getRootHostContext(rootContainer) {
-    DEBUG && console.log("getRootHostContext => deck");
+    DEBUG && console.log("[renderer] getRootHostContext => deck");
     return "deck";
   },
   getChildHostContext(parentHostContext, type, rootContainer) {
-    DEBUG && console.log(`getChildHostContext for ${type}`);
+    DEBUG && console.log(`[renderer] getChildHostContext for ${type}`);
     switch (type) {
       case "stream-deck-button":
         return "stream-deck-button";
@@ -131,28 +131,28 @@ export const renderer: HostConfig<
     }
   },
   getPublicInstance(instance) {
-    DEBUG && console.log("getPublicInstance");
+    DEBUG && console.log("[renderer] getPublicInstance");
     if (instance === undefined) {
       throw Error("Text nodes are not supported.");
     }
     return instance;
   },
   prepareForCommit(containerInfo) {
-    DEBUG && console.log("prepareForCommit => null");
+    DEBUG && console.log("[renderer] prepareForCommit => null");
     return null;
   },
   resetAfterCommit(containerInfo) {
-    DEBUG && console.log("resetAfterCommit => void");
+    DEBUG && console.log("[renderer] resetAfterCommit => void");
   },
   preparePortalMount(containerInfo) {
-    DEBUG && console.log("preparePortalMount");
+    DEBUG && console.log("[renderer] preparePortalMount");
   },
   scheduleTimeout(fn, delay) {
-    DEBUG && console.log("scheduleTimeout");
+    DEBUG && console.log("[renderer] scheduleTimeout");
     return setTimeout(fn, delay);
   },
   cancelTimeout(id) {
-    DEBUG && console.log("cancelTimeout");
+    DEBUG && console.log("[renderer] cancelTimeout");
     clearTimeout(id);
   },
   noTimeout: -1,
@@ -162,31 +162,31 @@ export const renderer: HostConfig<
   warnsIfNotActing: true,
   setCurrentUpdatePriority(newPriority) {},
   getCurrentUpdatePriority() {
-    DEBUG && console.log("getCurrentUpdatePriority");
+    DEBUG && console.log("[renderer] getCurrentUpdatePriority");
     return DefaultEventPriority;
   },
   resolveUpdatePriority() {
     return DefaultEventPriority;
   },
   getInstanceFromNode(node) {
-    DEBUG && console.log("getInstanceFromNode");
+    DEBUG && console.log("[renderer] getInstanceFromNode");
     return undefined;
   },
   beforeActiveInstanceBlur() {
-    DEBUG && console.log("beforeActiveInstanceBlur");
+    DEBUG && console.log("[renderer] beforeActiveInstanceBlur");
   },
   afterActiveInstanceBlur() {
-    DEBUG && console.log("afterActiveInstanceBlur");
+    DEBUG && console.log("[renderer] afterActiveInstanceBlur");
   },
   prepareScopeUpdate(scopeInstance, instance) {
-    DEBUG && console.log("prepareScopeUpdate");
+    DEBUG && console.log("[renderer] prepareScopeUpdate");
   },
   getInstanceFromScope(scopeInstance) {
-    DEBUG && console.log("getInstanceFromScope");
+    DEBUG && console.log("[renderer] getInstanceFromScope");
     return null;
   },
   detachDeletedInstance(node) {
-    DEBUG && console.log("detachDeletedInstance");
+    DEBUG && console.log("[renderer] detachDeletedInstance");
     node.unmount();
   },
   supportsHydration: false,
@@ -198,7 +198,7 @@ export const renderer: HostConfig<
     keepChildren,
     recyclableInstance,
   ) {
-    DEBUG && console.log("cloneInstance");
+    DEBUG && console.log("[renderer] cloneInstance");
     const updatePayload = computeUpdatePayload(oldProps, newProps);
 
     if (instance instanceof StreamDeckInstance) {
@@ -215,29 +215,35 @@ export const renderer: HostConfig<
       return clone;
     }
 
-    // Buttons: reuse the same instance so event listeners aren't leaked.
-    instance.update(updatePayload);
-    return instance;
+    // Return a new instance so React sees WIP.stateNode !== current.stateNode
+    // and propagates the change up to the parent (stream-deck).
+    // unmount() removes the old instance's stream deck event listeners before
+    // the new instance registers its own in render().
+    instance.unmount();
+    return new StreamDeckButtonInstance(
+      { ...instance.props, ...updatePayload },
+      instance.index,
+    );
   },
   createContainerChildSet(container) {
-    DEBUG && console.log("createContainerChildSet => {}");
+    DEBUG && console.log("[renderer] createContainerChildSet => {}");
     return {};
   },
   appendChildToContainerChildSet(childSet, child) {
-    DEBUG && console.log("appendChildToContainerChildSet");
+    DEBUG && console.log("[renderer] appendChildToContainerChildSet");
     if (child instanceof StreamDeckInstance) {
       childSet.deck = child;
     }
   },
   finalizeContainerChildren(container, newChildren) {
-    DEBUG && console.log("finalizeContainerChildren => void");
+    DEBUG && console.log("[renderer] finalizeContainerChildren => void");
   },
   replaceContainerChildren(container, newChildren) {
-    DEBUG && console.log("replaceContainerChildren");
+    DEBUG && console.log("[renderer] replaceContainerChildren");
     newChildren.deck?.render(container);
   },
   cloneHiddenInstance(instance, type, props, internalInstanceHandle) {
-    DEBUG && console.log("cloneHiddenInstance");
+    DEBUG && console.log("[renderer] cloneHiddenInstance");
     // @todo
     return instance;
   },

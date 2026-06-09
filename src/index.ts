@@ -13,9 +13,9 @@ export default {
   render(element: ReactNode, deck: StreamDeckContainer) {
     const container = reconciler.createContainer(
       deck,
-      0,
+      1,
       null,
-      true,
+      process.env.NODE_ENV === "development",
       null,
       "streamdeck",
       (err) => console.error(err),
